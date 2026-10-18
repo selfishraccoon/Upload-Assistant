@@ -21,6 +21,12 @@ config = {
         # If less than the number of trackers pass the checking, exit immediately.
         "tracker_pass_checks": 1,
 
+        # Persistent cache for IMDb title details
+        "metadata_cache_enabled": True,
+        "metadata_cache_dir": "data/cache/metadata",
+        "metadata_cache_default_ttl_hours": 168,
+        "metadata_cache_negative_ttl_minutes": 60,
+
         # Set true to suppress config warnings on startup
         "suppress_warnings": False,
 

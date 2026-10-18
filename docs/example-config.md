@@ -57,6 +57,13 @@ Important gotchas:
 - `tmdb_api` (str, required): TMDb API key. Get it from https://www.themoviedb.org/settings/api
 - `btn_api` (str): BTN API key (used to fetch BTN details).
 
+### Metadata cache
+- `metadata_cache_enabled` (bool): Enable persistent caching of IMDb title details. Defaults to `True`.
+- `metadata_cache_dir` (str): Cache directory, relative to the repository root unless absolute. Defaults to `data/cache/metadata`.
+- `metadata_cache_default_ttl_hours` (int): Cache duration for successful responses. Defaults to 168 hours (7 days).
+- `metadata_cache_negative_ttl_minutes` (int): Cache duration for empty/not-found responses. Defaults to 60 minutes. Network and HTTP errors are not cached.
+- Optional `metadata_cache_services` dict: Override `enabled` and TTL per provider, for example `{"imdb": {"title_ttl_hours": 72}}`.
+
 ### Image host selection (priority list)
 Order matters: `img_host_1` is primary, later hosts are fallbacks.
 

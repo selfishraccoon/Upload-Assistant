@@ -935,7 +935,13 @@ class Prep:
         # Ensure IMDb info is retrieved if it wasn't already fetched
         imdb_id_value = _to_int(meta.get('imdb_id'))
         if meta.get('imdb_info', None) is None and imdb_id_value != 0:
-            imdb_info = await imdb_manager.get_imdb_info_api(imdb_id_value, manual_language=meta.get('manual_language'), debug=meta.get('debug', False))
+            imdb_info = await imdb_manager.get_imdb_info_api(
+                imdb_id_value,
+                manual_language=meta.get('manual_language'),
+                debug=meta.get('debug', False),
+                base_dir=meta.get('base_dir', ''),
+                config=self.config,
+            )
             meta['imdb_info'] = imdb_info
 
         check_valid_data = meta.get('imdb_info', {}).get('title', "")
@@ -1065,7 +1071,13 @@ class Prep:
                                 if meta['debug']:
                                     console.print(f"[yellow]Updating IMDb ID from episode data: {series_imdb}")
                                 meta['imdb_id'] = int(series_imdb)
-                                imdb_info = await imdb_manager.get_imdb_info_api(meta['imdb_id'], manual_language=meta.get('manual_language'), debug=meta.get('debug', False))
+                                imdb_info = await imdb_manager.get_imdb_info_api(
+                                    meta['imdb_id'],
+                                    manual_language=meta.get('manual_language'),
+                                    debug=meta.get('debug', False),
+                                    base_dir=meta.get('base_dir', ''),
+                                    config=self.config,
+                                )
                                 meta['imdb_info'] = imdb_info
                                 check_valid_data = meta.get('imdb_info', {}).get('title', "")
                                 if check_valid_data:

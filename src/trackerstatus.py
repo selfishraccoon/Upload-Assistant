@@ -86,6 +86,8 @@ class TrackerStatusManager:
                                 local_meta['imdb_id'],
                                 manual_language=local_meta.get('manual_language'),
                                 debug=bool(local_meta.get('debug', False)),
+                                base_dir=local_meta.get('base_dir', ''),
+                                config=self.config,
                             )
                             break
                         else:

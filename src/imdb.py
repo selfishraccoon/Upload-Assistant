@@ -14,10 +14,16 @@ import httpx
 
 from src.cleanup import cleanup_manager
 from src.console import console
+from src.metadata_cache import cache_for, is_cache_miss
 
 anitopy_parse_fn: Any = cast(Any, anitopy).parse
 guessit_module: Any = cast(Any, guessit)
 GuessitFn = Callable[[str, Optional[dict[str, Any]]], dict[str, Any]]
+
+IMDB_GRAPHQL_HEADERS = {
+    "Content-Type": "application/json",
+    "Referer": "https://www.imdb.com/",
+}
 
 
 def guessit_fn(value: str, options: Optional[dict[str, Any]] = None) -> dict[str, Any]:
@@ -39,6 +45,8 @@ class ImdbManager:
         imdbID: Union[int, str],
         manual_language: Optional[Union[str, dict[str, Any]]] = None,
         debug: bool = False,
+        base_dir: str = "",
+        config: Optional[dict[str, Any]] = None,
     ) -> dict[str, Any]:
         imdb_info: dict[str, Any] = {}
 
@@ -52,6 +60,12 @@ class ImdbManager:
         except Exception as e:
             console.print(f"[red]Error:[/red] {e}")
             return imdb_info
+
+        cache = cache_for(base_dir, config)
+        cache_key = f"{imdbID}|{manual_language!s}"
+        cached_info = await cache.get("imdb", "title", cache_key)
+        if not is_cache_miss(cached_info) and isinstance(cached_info, dict):
+            return cached_info
 
         query = {
             "query": f"""
@@ -273,7 +287,7 @@ class ImdbManager:
                 response = await client.post(
                     "https://api.graphql.imdb.com/",
                     json=query,
-                    headers={"Content-Type": "application/json"},
+                    headers=IMDB_GRAPHQL_HEADERS,
                     timeout=10,
                 )
                 response.raise_for_status()
@@ -287,6 +301,8 @@ class ImdbManager:
 
         title_data = self.safe_get(data, ["data", "title"], {})
         if not title_data:
+            if not data.get("errors"):
+                await cache.set("imdb", "title", cache_key, imdb_info, negative=True)
             return imdb_info  # Return empty if no data found
 
         imdb_info['imdbID'] = imdbID
@@ -474,6 +490,7 @@ class ImdbManager:
         if debug:
             console.print(f"[yellow]IMDb Response: {json.dumps(imdb_info, indent=2)[:1000]}...[/yellow]")
 
+        await cache.set("imdb", "title", cache_key, imdb_info)
         return imdb_info
 
     async def search_imdb(
@@ -576,7 +593,7 @@ class ImdbManager:
 
             try:
                 async with httpx.AsyncClient() as client:
-                    response = await client.post(url, json=query, headers={"Content-Type": "application/json"}, timeout=10)
+                    response = await client.post(url, json=query, headers=IMDB_GRAPHQL_HEADERS, timeout=10)
                     response.raise_for_status()
                     data = response.json()
             except Exception as e:
@@ -950,7 +967,7 @@ class ImdbManager:
                 response = await client.post(
                     "https://api.graphql.imdb.com/",
                     json=query,
-                    headers={"Content-Type": "application/json"},
+                    headers=IMDB_GRAPHQL_HEADERS,
                     timeout=10
                 )
                 response.raise_for_status()

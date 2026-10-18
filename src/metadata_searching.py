@@ -109,7 +109,9 @@ async def all_ids(meta: dict[str, Any], tvdb_handler: Any, tmdb_manager: TmdbMan
         imdb_manager.get_imdb_info_api(
             meta['imdb_id'],
             manual_language=meta.get('manual_language'),
-            debug=meta.get('debug', False)
+            debug=meta.get('debug', False),
+            base_dir=meta.get('base_dir', ''),
+            config=tmdb_manager.config,
         )
     ]
 
@@ -288,7 +290,9 @@ async def imdb_tmdb_tvdb(meta: dict[str, Any], filename: str, tvdb_handler: Any,
         imdb_manager.get_imdb_info_api(
             meta['imdb_id'],
             manual_language=meta.get('manual_language'),
-            debug=meta.get('debug', False)
+            debug=meta.get('debug', False),
+            base_dir=meta.get('base_dir', ''),
+            config=tmdb_manager.config,
         ),
     ]
 
@@ -450,7 +454,9 @@ async def imdb_tvdb(meta: dict[str, Any], filename: str, tvdb_handler: Any, tmdb
         imdb_manager.get_imdb_info_api(
             meta['imdb_id'],
             manual_language=meta.get('manual_language'),
-            debug=meta.get('debug', False)
+            debug=meta.get('debug', False),
+            base_dir=meta.get('base_dir', ''),
+            config=tmdb_manager.config,
         )
     ]
 
@@ -536,7 +542,9 @@ async def imdb_tmdb(meta: dict[str, Any], filename: str, _tvdb_handler: Any, tmd
         imdb_manager.get_imdb_info_api(
             meta['imdb_id'],
             manual_language=meta.get('manual_language'),
-            debug=meta.get('debug', False)
+            debug=meta.get('debug', False),
+            base_dir=meta.get('base_dir', ''),
+            config=tmdb_manager.config,
         )
     ]
 

@@ -3,6 +3,7 @@ data/config.json
 data/config.py
 data/config*
 data/cookies/
+data/cache/
 data/tags.json
 data/tvdb/
 data/web_ui/*.*
@@ -28,3 +29,6 @@ data/*.json
 venv/*
 .pyright
 web_ui/static/js/node_modules/
+
+.idea/*
+/Upload-Assistant.iml
